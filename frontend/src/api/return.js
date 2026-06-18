@@ -1,13 +1,13 @@
 import request from '@/utils/request'
 
 export function page(params) {
-  return request.get('/return/page', { params })
+  return request.get('/returns/page', { params })
 }
 
 export function getById(id) {
-  return request.get(`/return/${id}`)
+  return request.get(`/returns/${id}`)
 }
 
 export function returnEquipment(data) {
-  return request.post('/return', data)
+  return request.post('/returns', data)
 }
