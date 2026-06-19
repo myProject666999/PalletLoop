@@ -26,12 +26,12 @@
         <el-table-column prop="dispatchNo" label="发货单号" min-width="140" />
         <el-table-column label="合作方名称" min-width="120">
           <template #default="{ row }">
-            {{ getPartnerName(row.partnerId) }}
+            {{ row.partnerName }}
           </template>
         </el-table-column>
         <el-table-column label="器具类型" min-width="100">
           <template #default="{ row }">
-            {{ getTypeName(row.typeId) }}
+            {{ row.typeName }}
           </template>
         </el-table-column>
         <el-table-column prop="quantity" label="发出数量" min-width="90" />
@@ -90,6 +90,7 @@ const getTypeName = (typeId) => {
 }
 
 const getOverdueTagType = (days) => {
+  if (days == null) return 'info'
   if (days > 30) return 'danger'
   if (days > 15) return 'warning'
   return 'info'
@@ -114,17 +115,31 @@ const fetchData = async () => {
     } else {
       res = await getOverdue()
     }
-    tableData.value = res || []
+    tableData.value = sanitizeAlertData(res)
   } finally {
     loading.value = false
   }
 }
 
+const sanitizeAlertData = (data) => {
+  if (!Array.isArray(data)) return []
+  return data.filter(item => item != null).map(item => ({
+    dispatchId: item.dispatchId,
+    dispatchNo: item.dispatchNo || '-',
+    partnerId: item.partnerId,
+    partnerName: item.partnerName || '未知合作方',
+    typeId: item.typeId,
+    typeName: item.typeName || '未知类型',
+    quantity: item.quantity || 0,
+    dispatchDate: item.dispatchDate,
+    expectedReturnDate: item.expectedReturnDate,
+    overdueDays: item.overdueDays != null ? item.overdueDays : 0
+  }))
+}
+
 const handleRemind = (row) => {
-  const partnerName = getPartnerName(row.partnerId)
-  const typeName = getTypeName(row.typeId)
   ElMessageBox.confirm(
-    `确认向【${partnerName}】发送催还通知？涉及器具：${typeName} x ${row.quantity}，已超期 ${row.overdueDays} 天`,
+    `确认向【${row.partnerName}】发送催还通知？涉及器具：${row.typeName} x ${row.quantity}，已超期 ${row.overdueDays} 天`,
     '催还确认',
     {
       confirmButtonText: '确认发送',

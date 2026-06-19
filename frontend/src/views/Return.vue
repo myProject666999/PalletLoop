@@ -94,13 +94,16 @@
           </el-select>
         </el-form-item>
         <el-form-item label="可回收数量">
-          <el-tag type="info" effect="plain">最大可回收数量：{{ maxReturnable }}</el-tag>
+          <el-tag type="info" effect="plain">最大可回收数量：{{ addForm.dispatchId ? maxReturnable : '请先选择发货单' }}</el-tag>
         </el-form-item>
-        <el-form-item label="回收数量" prop="quantity">
+        <el-form-item label="回收数量" prop="quantity" v-if="addForm.dispatchId">
           <el-input-number v-model="addForm.quantity" :min="1" :max="maxReturnable" style="width: 100%" @change="handleQuantityChange" />
         </el-form-item>
-        <el-form-item label="损坏数量" prop="damaged">
+        <el-form-item label="损坏数量" prop="damaged" v-if="addForm.dispatchId">
           <el-input-number v-model="addForm.damaged" :min="0" :max="addForm.quantity" style="width: 100%" />
+        </el-form-item>
+        <el-form-item label="回收数量" v-else>
+          <el-input placeholder="请先选择关联发货单" disabled style="width: 100%" />
         </el-form-item>
         <el-form-item label="回收日期" prop="returnDate">
           <el-date-picker v-model="addForm.returnDate" type="date" placeholder="选择回收日期" style="width: 100%" value-format="YYYY-MM-DD" />

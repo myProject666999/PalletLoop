@@ -43,7 +43,8 @@ public class AlertServiceImpl implements AlertService {
         List<OverdueAlertDTO> alerts = new ArrayList<>();
 
         LambdaQueryWrapper<DispatchRecord> wrapper = new LambdaQueryWrapper<>();
-        wrapper.lt(DispatchRecord::getExpectedReturnDate, today);
+        wrapper.isNotNull(DispatchRecord::getExpectedReturnDate)
+                .lt(DispatchRecord::getExpectedReturnDate, today);
         if (partnerId != null) {
             wrapper.eq(DispatchRecord::getPartnerId, partnerId);
         }
@@ -70,14 +71,10 @@ public class AlertServiceImpl implements AlertService {
                 dto.setOverdueDays((int) ChronoUnit.DAYS.between(dispatch.getExpectedReturnDate(), today));
 
                 Partner partner = partnerMapper.selectById(dispatch.getPartnerId());
-                if (partner != null) {
-                    dto.setPartnerName(partner.getName());
-                }
+                dto.setPartnerName(partner != null ? partner.getName() : "未知合作方");
 
                 EquipmentType type = equipmentTypeMapper.selectById(dispatch.getTypeId());
-                if (type != null) {
-                    dto.setTypeName(type.getName());
-                }
+                dto.setTypeName(type != null ? type.getName() : "未知类型");
 
                 alerts.add(dto);
             }
