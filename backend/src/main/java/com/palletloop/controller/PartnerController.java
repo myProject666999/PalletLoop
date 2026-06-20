@@ -38,12 +38,12 @@ public class PartnerController {
 
     @PostMapping
     public Result<?> save(@RequestBody @Validated Partner entity) {
-        return partnerService.save(entity) ? Result.success() : Result.error("保存失败");
+        return partnerService.save(entity);
     }
 
     @PutMapping
     public Result<?> update(@RequestBody @Validated Partner entity) {
-        return partnerService.updateById(entity) ? Result.success() : Result.error("更新失败");
+        return partnerService.updateById(entity);
     }
 
     @DeleteMapping("/{id}")

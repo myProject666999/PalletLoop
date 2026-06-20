@@ -37,12 +37,12 @@ public class EquipmentTypeController {
 
     @PostMapping
     public Result<?> save(@RequestBody @Validated EquipmentType entity) {
-        return equipmentTypeService.save(entity) ? Result.success() : Result.error("保存失败");
+        return equipmentTypeService.save(entity);
     }
 
     @PutMapping
     public Result<?> update(@RequestBody @Validated EquipmentType entity) {
-        return equipmentTypeService.updateById(entity) ? Result.success() : Result.error("更新失败");
+        return equipmentTypeService.updateById(entity);
     }
 
     @DeleteMapping("/{id}")

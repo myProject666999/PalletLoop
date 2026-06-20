@@ -1,6 +1,7 @@
 package com.palletloop.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.palletloop.common.Result;
 import com.palletloop.entity.EquipmentType;
 
 import java.util.List;
@@ -13,9 +14,9 @@ public interface EquipmentTypeService {
 
     EquipmentType getById(Long id);
 
-    boolean save(EquipmentType entity);
+    Result<?> save(EquipmentType entity);
 
-    boolean updateById(EquipmentType entity);
+    Result<?> updateById(EquipmentType entity);
 
     boolean removeById(Long id);
 }

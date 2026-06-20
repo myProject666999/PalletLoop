@@ -3,6 +3,7 @@ package com.palletloop.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.palletloop.common.Result;
 import com.palletloop.entity.Partner;
 import com.palletloop.mapper.PartnerMapper;
 import com.palletloop.service.PartnerService;
@@ -45,13 +46,32 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     @Override
-    public boolean save(Partner entity) {
-        return partnerMapper.insert(entity) > 0;
+    public Result<?> save(Partner entity) {
+        if (!StringUtils.hasText(entity.getCode())) {
+            return Result.error("合作方编码不能为空");
+        }
+        LambdaQueryWrapper<Partner> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Partner::getCode, entity.getCode());
+        Long count = partnerMapper.selectCount(wrapper);
+        if (count != null && count > 0) {
+            return Result.error("合作方编码已存在：" + entity.getCode());
+        }
+        return partnerMapper.insert(entity) > 0 ? Result.success() : Result.error("保存失败");
     }
 
     @Override
-    public boolean updateById(Partner entity) {
-        return partnerMapper.updateById(entity) > 0;
+    public Result<?> updateById(Partner entity) {
+        if (!StringUtils.hasText(entity.getCode())) {
+            return Result.error("合作方编码不能为空");
+        }
+        LambdaQueryWrapper<Partner> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Partner::getCode, entity.getCode())
+                .ne(entity.getId() != null, Partner::getId, entity.getId());
+        Long count = partnerMapper.selectCount(wrapper);
+        if (count != null && count > 0) {
+            return Result.error("合作方编码已存在：" + entity.getCode());
+        }
+        return partnerMapper.updateById(entity) > 0 ? Result.success() : Result.error("更新失败");
     }
 
     @Override
