@@ -60,7 +60,7 @@
             </el-select>
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-button type="primary" @click="handleExport">
+            <el-button type="primary" @click="handleExport" :loading="exportLoading">
               <el-icon><Download /></el-icon>导出
             </el-button>
           </el-col>
@@ -102,11 +102,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { getOverview, getPartnerStats, getAllPartnerStats } from '@/api/statistics'
+import { getOverview, getPartnerStats, getAllPartnerStats, exportPartnerStats } from '@/api/statistics'
 import { list as getPartnerList } from '@/api/partner'
 
 const loading = ref(false)
 const statsLoading = ref(false)
+const exportLoading = ref(false)
 const overview = ref({})
 const partnerStatsList = ref([])
 const partnerList = ref([])
@@ -154,8 +155,29 @@ const fetchPartnerStats = async () => {
   }
 }
 
-const handleExport = () => {
-  ElMessage.info('导出功能开发中')
+const handleExport = async () => {
+  exportLoading.value = true
+  try {
+    const blob = await exportPartnerStats(selectedPartnerId.value || null)
+    const url = window.URL.createObjectURL(new Blob([blob]))
+    const link = document.createElement('a')
+    link.href = url
+    const today = new Date()
+    const y = today.getFullYear()
+    const m = String(today.getMonth() + 1).padStart(2, '0')
+    const d = String(today.getDate()).padStart(2, '0')
+    link.setAttribute('download', `合作方器具统计_${y}${m}${d}.xlsx`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+    ElMessage.success('导出成功')
+  } catch (e) {
+    console.error('导出失败:', e)
+    ElMessage.error('导出失败，请重试')
+  } finally {
+    exportLoading.value = false
+  }
 }
 
 const getSummaries = ({ columns, data }) => {

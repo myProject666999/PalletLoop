@@ -11,3 +11,10 @@ export function getPartnerStats(partnerId) {
 export function getAllPartnerStats() {
   return request.get('/statistics/partners')
 }
+
+export function exportPartnerStats(partnerId) {
+  return request.get('/statistics/export', {
+    params: { partnerId },
+    responseType: 'blob'
+  })
+}

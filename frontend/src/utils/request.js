@@ -17,6 +17,9 @@ request.interceptors.request.use(
 
 request.interceptors.response.use(
   (response) => {
+    if (response.config.responseType === 'blob') {
+      return response.data
+    }
     if (response.data.code === 200) {
       return response.data.data
     } else {

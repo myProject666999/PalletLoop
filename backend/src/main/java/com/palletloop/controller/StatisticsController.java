@@ -3,6 +3,7 @@ package com.palletloop.controller;
 import com.palletloop.common.Result;
 import com.palletloop.dto.StatisticsDTO;
 import com.palletloop.service.StatisticsService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,5 +29,12 @@ public class StatisticsController {
     @GetMapping("/partners")
     public Result<List<StatisticsDTO.PartnerStat>> getAllPartnerStats() {
         return Result.success(statisticsService.getAllPartnerStats());
+    }
+
+    @GetMapping("/export")
+    public void exportPartnerStats(
+            @RequestParam(required = false) Long partnerId,
+            HttpServletResponse response) {
+        statisticsService.exportPartnerStats(partnerId, response);
     }
 }
